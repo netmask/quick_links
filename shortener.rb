@@ -59,9 +59,15 @@ class ShortenerApplication < Sinatra::Application
   end
 
   post '/' do
-    content_type :json
     @shortener = Shortener.new($redis)
 
-    JSON.generate(short_code: @shortener.create(params['url']))
+    if params['url'].strip.empty?
+      error 400 do
+        { error: "the url can't be blank" }
+      end
+    end
+
+    content_type :json
+    JSON.generate({short_code: @shortener.create(params['url'])})
   end
 end

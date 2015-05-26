@@ -4,6 +4,13 @@ body{
     font-family: Trebuchet MS, Helvetica, sans-serif;
 }
 
+footer{
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+
+}
+
 .center{
     text-align: center;
 }
