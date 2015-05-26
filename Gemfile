@@ -4,5 +4,7 @@ gem 'sinatra'
 gem 'puma'
 gem 'redis'
 gem 'awesome_print'
-
+gem 'capistrano3-puma'
 gem 'capistrano'
+gem 'capistrano-bundler'
+gem 'capistrano-rvm'

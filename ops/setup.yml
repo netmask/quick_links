@@ -1,0 +1,76 @@
+- hosts: quicklinks
+  tasks:
+  - name: basic packages
+    apt: update_cache=yes name={{ item }} state=installed
+    with_items:
+     - emacs24-nox
+     - htop
+     - libpq-dev
+     - wget
+     - git
+     - build-essential
+     - ruby
+     - subversion
+     - gawk
+     - g++
+     - gcc
+     - make
+     - libreadline6-dev
+     - zlib1g-dev
+     - libssl-dev
+     - libyaml-dev
+     - libsqlite3-dev
+     - sqlite3
+     - autoconf
+     - libgdbm-dev
+     - libncurses5-dev
+     - automake
+     - libtool
+     - bison
+     - pkg-config
+     - libffi-dev
+     - nodejs
+     - python-psycopg2
+
+  - name: Create swap file
+    command: fallocate -l 2048M /swapfile creates=/swapfile
+
+  - name: Change swap permissions
+    file: path=/swapfile mode=0600
+
+  - name: Check swap file type
+    command: file /swapfile
+    register: swapfile
+
+  - name: Make swap file
+    command: mkswap /swapfile
+    when: swapfile.stdout.find('swap file') == -1
+
+  - name: Write swap entry in fstab
+    mount: name=none
+           src=/swapfile
+           fstype=swap
+           opts=sw
+           passno=0
+           dump=0
+           state=present
+    register: write_swap_entry
+
+  - name: Mount swap
+    command: "swapon /swapfile"
+    when: write_swap_entry|changed
+
+- hosts: quicklinks
+  tasks:
+  - name: "create app directory"
+    file: path=/var/www/ owner=www-data group=www-data mode=0755 state=directory
+  - name: "add deployer user"
+    user: name=quicklinks comment="quicklinks user" group=www-data home=/var/www/quicklinks
+  - name: "create app directory"
+    file: path=/var/www/quicklinks owner=quicklinks group=www-data mode=0700 state=directory
+  - name: "add public key"
+    authorized_key: user=quicklinks key="{{ lookup('file', '/Users/netmask/.ssh/id_rsa.pub') }}"
+  - name: "Add shared deployment private key"
+    copy: src=./id_rsa dest=/var/www/quicklinks/.ssh/id_rsa  mode=0644
+  - name: "Add shared deployment public key"
+    copy: src=./id_rsa.pub dest=/var/www/quicklinks/.ssh/id_rsa.pub mode=0644
