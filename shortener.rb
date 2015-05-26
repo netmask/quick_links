@@ -49,11 +49,6 @@ end
 class ShortenerApplication < Sinatra::Application
 
   set :public_folder, 'public'
-  set :static, true
-
-  get '/' do
-    redirect '/index.html'
-  end
 
   get '/:id' do
     @shortener = Shortener.new($redis)
