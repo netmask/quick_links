@@ -1,7 +1,7 @@
 $('#short_them').click(function(event){
     event.preventDefault();
     $.ajax({
-        url: '/',
+        url: '/short',
         type: 'post',
         dataType: 'json',
         success: function (data) {

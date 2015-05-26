@@ -58,7 +58,7 @@ class ShortenerApplication < Sinatra::Application
     redirect (redirect_url ? redirect_url : 'https://ql.lc/' ), 301
   end
 
-  post '/' do
+  post '/short' do
     @shortener = Shortener.new($redis)
 
     if params['url'].strip.empty?
