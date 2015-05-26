@@ -1,0 +1,45 @@
+body{
+    margin: 0px;
+    background-color: #FAFAFA;
+    font-family: Trebuchet MS, Helvetica, sans-serif;
+}
+
+.center{
+    text-align: center;
+}
+
+.shadow_component{
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.big_url_input{
+    width: 60%;
+    height: 35px;
+    padding: 10px;
+    margin: 0.5rem 0 1rem 0;
+    border-radius: 2px;
+    background-color: #fff;
+    outline: 0;
+    border: none;
+    font-size: 24px;
+}
+
+.dimmed{
+    color: #BDBDBD;
+}
+
+.the_button{
+    height: 55px;
+    width: 77px;
+    background-color: #03A9F4;
+    outline: 0;
+    border: none;
+    font-size: 24px;
+}
+
+.short_pane {
+    width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}

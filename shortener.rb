@@ -18,16 +18,22 @@ class Shortener
 
   def create(url)
     key = nil
-    if valid_url? url
-      if self.redis.exists(url)
-        key = self.redis.get url
-      else
-        key = next_value
-        self.redis.set url, key # Key pair ;)
-        self.redis.set key, url
-      end
+
+    if self.redis.exists(url)
+      key = self.redis.get url
+    else
+      key = next_value
+      sanitized_url = sanitize(url)
+
+      self.redis.set sanitized_url, key # Key pair ;)
+      self.redis.set key, sanitized_url
     end
+
     key
+  end
+
+  def sanitize(url) #need a more elegant way to do this
+    url['http'] ? url : "http://#{url}"
   end
 
   def restore(key)
@@ -36,10 +42,6 @@ class Shortener
 
   def next_value
     (@redis.incr(COUNTER_KEY)).to_s(ENCODING_BASE)
-  end
-
-  def valid_url?(url)
-    url =~ /\A#{URI::regexp(%w(http https))}\z/
   end
 end
 
@@ -53,7 +55,7 @@ class ShortenerApplication < Sinatra::Application
     redirect '/index.html'
   end
 
-  get '/short/:id' do
+  get '/:id' do
     @shortener = Shortener.new($redis)
 
     cache_control :public
@@ -61,11 +63,10 @@ class ShortenerApplication < Sinatra::Application
     redirect (redirect_url ? redirect_url : 'https://ql.lc/' ), 301
   end
 
-  post '/short' do
+  post '/' do
     content_type :json
     @shortener = Shortener.new($redis)
 
-    request_body = JSON.parse(request.body.read)
-    JSON.generate(short_code: @shortener.create(request_body['url']))
+    JSON.generate(short_code: @shortener.create(params['url']))
   end
 end
